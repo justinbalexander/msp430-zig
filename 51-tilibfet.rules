@@ -1,0 +1,5 @@
+# For ezFet firmware updated to use tilib using mspdebug
+SUBSYSTEM=="usb",\
+ATTR{idVendor}=="2047",\
+ATTR{idProduct}=="0013",\
+MODE="0666",\
