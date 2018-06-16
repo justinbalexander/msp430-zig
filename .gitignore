@@ -1,4 +1,4 @@
-# Created by https://www.gitignore.io/api/c,nim,vim
+# Created by https://www.gitignore.io/api/c,vim
 
 ### C ###
 # Prerequisites
@@ -54,9 +54,6 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-### Nim ###
-nimcache/
-
 ### Vim ###
 # swap
 .sw[a-p]
@@ -70,9 +67,11 @@ Session.vim
 tags
 
 
-# End of https://www.gitignore.io/api/c,nim,vim
+# End of https://www.gitignore.io/api/c,vim
 
 gcc/
 mspdebug*
 *.lst
 *.log
+/zig-cache/
+
