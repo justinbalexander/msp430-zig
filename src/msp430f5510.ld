@@ -1,7 +1,7 @@
 ENTRY(_start)
 
 /* Set stacksize here */
-STACKSIZE = 512
+/*STACKSIZE = 512*/
 
 MEMORY {
   PERIPHERALS : ORIGIN = 0x0000, LENGTH = 4K
@@ -14,8 +14,8 @@ MEMORY {
   USBRAM : ORIGIN = 0x1C00, LENGTH = 2K
 
   /* Ensures RAM data doesn't spill into stack */
-  RAM : ORIGIN = 0x2400, LENGTH = 4K - STACKSIZE
-  STACK : ORIGIN = 0x2400 + 4K - STACKSIZE, LENGTH = STACKSIZE
+  RAM : ORIGIN = 0x2400, LENGTH = 4K - 512
+  STACK : ORIGIN = 0x2400 + 4K - 512, LENGTH = 512
 
   ROM : ORIGIN = 0x8000, LENGTH = 32K - (23*2)
   ISR : ORIGIN = 0xFFD2, LENGTH = 23*2
@@ -31,7 +31,7 @@ SECTIONS {
   .rodata :
   {
     . = ALIGN(2);
-    *(.rodata)
+    *(.rodata .rodata.*)
   } > ROM
 
   .info      : {*(.info)}  > INFOMEM
@@ -44,13 +44,13 @@ SECTIONS {
   {
     . = ALIGN(2);
     KEEP(*(.text.boot))
-    *(.text)
+    *(.text .text.*)
   } > ROM
 
   .data :
   {
     . = ALIGN(2);
-    *(.data)
+    *(.data .data.*)
   } > RAM
 
   .stack :
@@ -63,9 +63,12 @@ SECTIONS {
   {
     . = ALIGN(2);
     PROVIDE (__bssstart = .);
-    *(.bss)
+    *(.bss .bss.*)
     . = ALIGN(2);
     *(COMMON)
     PROVIDE (__bssend = .);
   } > RAM
   PROVIDE (__bsssize = SIZEOF(.bss));
+}
+
+INCLUDE msp430f5510_symbols.ld

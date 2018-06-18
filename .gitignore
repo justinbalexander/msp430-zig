@@ -76,3 +76,4 @@ mspdebug*
 *.temp
 /zig-cache/
 *.pdf
+*.h

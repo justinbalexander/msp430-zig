@@ -22,7 +22,7 @@ export nakedcc fn _start() section(".text.boot") noreturn
   main();
 }
 
-fn main() noreturn {
+export fn main() noreturn {
   hw.WDTCTL = hw.WDTPW + hw.WDTHOLD;
   while (true) {}
 }
