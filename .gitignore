@@ -75,5 +75,6 @@ mspdebug*
 *.log
 *.temp
 /zig-cache/
+include/msp430*.zig
 *.pdf
 *.h
