@@ -7,17 +7,18 @@ GCC=gcc/bin/
 MSPDEBUG=./
 
 PROJECT_FILE=src/main.zig
+ASSEMBLY_FILE=zig-cache/main.s
 ZFLAGS=build-obj --target-arch msp430 --target-os freestanding --emit asm
 ZFLAGS+=--release-small
 # LLVM can emit calls to libgcc hardware multiplier routines
-ZFLAGS+=-mllvm -mhwmult=32bit
+ZFLAGS+=-mllvm -mhwmult=f5series
 
 CFLAGS=-mmcu=$(TARGET_MCU) -msmall -minrt
 CFLAGS+=-I$(SUPPORT_FILES_DIR) -L$(SUPPORT_FILES_DIR)
 
 # Required to link in calls to libgcc hardware multiplier routines
 # Change to match width of hardware multiplier for your target
-LFLAGS=-lmul_32
+LFLAGS=-lmul_f5
 
 OUTPUT=main.elf
 
@@ -25,20 +26,13 @@ CODEFILES=src/main.zig Makefile
 
 all: main
 
-main: $(CODEFILES) deviceHeaderToZig
-	$(ZZ) $(ZFLAGS) $(PROJECT_FILE)
-	$(GCC)msp430-elf-gcc $(CFLAGS) zig-cache/main.s $(LFLAGS) -o $(OUTPUT)
-	
-	echo "----------DISASSEMBLY OF ALL SECTIONS---------" > asm.lst
-	$(GCC)msp430-elf-objdump -D $(OUTPUT) >> asm.lst
-	echo "---------SECTION SUMMARY/SYMBOL TABLE---------" >> asm.lst
-	$(GCC)msp430-elf-objdump -x $(OUTPUT) >> asm.lst
-	echo "--------------SECTION SIZES-------------------" >> asm.lst
-	$(GCC)msp430-elf-size $(OUTPUT) >> asm.lst
+main: deviceHeaderToZig justZig justGCC
 
-justGCC: $(CODEFILES)
-	$(GCC)msp430-elf-gcc $(CFLAGS) zig-cache/main.s $(LFLAGS) -o $(OUTPUT)
-	
+justZig: $(CODEFILES)
+	$(ZZ) $(ZFLAGS) $(PROJECT_FILE)
+
+justGCC: $(CODEFILES) $(ASSEMBLY_FILE)
+	$(GCC)msp430-elf-gcc $(CFLAGS) $(ASSEMBLY_FILE) $(LFLAGS) -o $(OUTPUT)
 	echo "----------DISASSEMBLY OF ALL SECTIONS---------" > asm.lst
 	$(GCC)msp430-elf-objdump -D $(OUTPUT) >> asm.lst
 	echo "---------SECTION SUMMARY/SYMBOL TABLE---------" >> asm.lst
