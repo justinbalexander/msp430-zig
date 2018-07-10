@@ -17,8 +17,9 @@ CFLAGS=-mmcu=$(TARGET_MCU) -msmall -minrt
 CFLAGS+=-I$(SUPPORT_FILES_DIR) -L$(SUPPORT_FILES_DIR)
 
 # Required to link in calls to libgcc hardware multiplier routines
+# if the options -nostartfiles or -nostdlib are selected
 # Change to match width of hardware multiplier for your target
-LFLAGS=-lmul_f5
+# LFLAGS=-lmul_f5
 
 OUTPUT=main.elf
 

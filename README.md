@@ -83,7 +83,33 @@ make ezFetToTILib
 
 # Notes
 
+## Hardware multiplication
+
 One of the flags passed to Zig is the msp430 llvm backend option
 `-mhwmult=f5series`. This allows llvm to generate calls to the MSPGCC provided
 hardware multiplier routines. This library needs to be linked in. See the
-variable `LFLAGS` in the Makefile as well.
+variable `LFLAGS` in the Makefile as well.  The options for hardware
+multiplication and corresponding library are:
+
+| HW OPTION | LIBRARY |
+| ---------|--------- |
+| "none" | -lmul_none |
+| "16bit" | -lmul_16 |
+| "32bit" | -lmul_32 |
+| "f5series" | -lmul_f5 |
+
+Note: the selection happens automatically when we use gcc's runtime (ie. don't
+pass in the options `-nostartfiles` or `-nostdlib` to gcc). You must still
+select the correct hardware multiplier for your target to llvm. gcc might be
+unable to link, thus warning you if you pass the incorrect option to llvm.
+
+I was never able to link when the hardware multiplier was needed and
+`-nostdlib` was used. The symbol `__mspabi_mpyll` was always missing.
+
+## Code and Data Models
+
+llvm emits assembly code that uses the mnemonic "call" and "ret" to enter
+subroutines. These instructions can only reach into the lower 64K of memory.
+However, the assembler will automatically translate the mnemonics to the correct
+"calla" and "reta" instructions if applicable based on the command line
+parameters "-msmall" or "-mlarge".
